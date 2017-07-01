@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="d3/d3.js"></script>
+        <style>
+            .chart rect{
+                fill:olive;
+            }
+
+            .chart text{
+                fill:white;
+            }
+        </style>
+    </head>
+    <body>
+        <svg class="chart" width="500" height="200">
+            <g transform="translate(0, 0)">
+              <rect width="50" height="19"></rect>  
+              <text x="30" y="9.5" dy="0.35em">50</text>
+            </g>
+            <g transform="translate(0, 20)">  
+              <rect width="70" height="19"></rect>  
+              <text x="50" y="9.5" dy="0.35em">70</text>
+            </g>
+            <g transform="translate(0,40)">
+              <rect width="94" height="19"></rect>  
+              <text x="74" y="9.5" dy="0.35em">94</text>
+            </g>
+            <g transform="translate(0,60)">
+              <rect width="156" height="19"></rect>  
+              <text x="130" y="9.5" dy="0.35em">156</text>
+            </g>
+        </svg>
+    </body>
+</html>

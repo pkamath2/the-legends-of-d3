@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="d3/d3.js"></script>
+        <style>
+            .chart{
+                /*border: solid black 1px;*/
+            }
+            .chart rect{
+                fill:steelblue;
+            }
+
+            .chart text{
+                fill: white;
+                font: 10px sans-serif;
+                text-anchor: middle;
+            }
+        </style>
+    </head>
+    <body>
+        <svg class="chart"></svg>
+        <script>
+            var data = [80,40,320,180,210,20,58,72,150];
+
+            /* Figure out the widths and the heights*/
+            var margin = {top: 20, right: 30, bottom: 30, left: 40};
+            var chartWidth = (data.length * barWidth);
+            var chartHeight = 400;
+
+            var canvasWidth = chartWidth + margin.left + margin.right;
+            var canvasHeight = chartHeight + margin.bottom + margin.top;
+            var barWidth = 40;
+
+            //var xAxis = d3.svg.axis()
+            //                    .scale()
+            var scaledData = d3.scaleLinear().domain([0,d3.max(data)]).range([0,chartHeight]);
+            var chart = d3.select("body").select(".chart")
+                                            .attr("width", canvasWidth)
+                                            .attr("height", canvasHeight)
+                                            .append("g").attr("transform",function(d,i){return "translate("+margin.left+","+margin.top+")";});
+
+            var bar = chart.selectAll("g").data(data)
+                                            .enter().append("g")
+                                            .attr("transform",function(d,i){return "translate("+(i*barWidth)+","+(chartHeight-d)+")";});
+            
+            bar.append("rect").attr("width",barWidth - 4)
+                                .attr("height", function(d,i){return d;});
+
+           // bar.append("text").attr("x", function(d,i){})
+        </script>
+    </body>
+</html>

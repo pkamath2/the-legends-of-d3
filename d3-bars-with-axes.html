@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="d3/d3.js"></script>
+        <style>
+            .chart{
+                /*border: solid black 1px;*/
+            }
+            .chart rect{
+                fill:steelblue;
+            }
+
+            .chart text{
+                font: 10px sans-serif;
+                text-anchor: middle;
+            }
+
+            .chart rect:hover {
+                fill: brown;
+            }
+
+            .axis--x path {
+                display: none;
+            }
+        </style>
+    </head>
+    <body>
+        <svg class="chart" width="730" height="450"></svg>
+        <script>
+            d3.csv("/data/codingdays.csv",function(d){
+                                            d.hours = +d.hours;
+                                            return d;  
+                                        },
+            function(err,data){
+                if(err) throw err;
+                //alert(JSON.stringify(data));  
+                
+                var margin = {top: 20, right: 30, bottom: 30, left: 40};
+                var barWidth =60;
+
+                var svg = d3.select('svg');
+                
+                var all_days = data.map(function(d){return d.day;});
+                var all_hours = data.map(function(d){return d.hours;});
+                
+                var scaled_hours = d3.scaleLinear().domain([0,d3.max(all_hours)]).range([d3.max(all_hours) * 50,0]);  //Y-Axis -- Scale here is inverted because of range(max,0)
+                var ordinal_days = d3.scaleBand().domain(all_days).range([0,(all_days.length * barWidth)]); //X-Axis
+
+                svgWidth = (all_days.length * barWidth) + margin.left + margin.right;
+                svgHeight = scaled_hours(d3.min(all_hours)) + margin.top + margin.bottom;
+
+                var g = svg.append("g").attr("transform",function(d,i){return "translate("+margin.left+","+margin.top+")";});
+
+                g.selectAll("g").data(data)
+                                    .enter().append("rect")
+                                    .attr("width",barWidth - 3)
+                                    .attr("height",function(d,i){return (svgHeight - scaled_hours(d.hours))})
+                                    .attr("x",function(d,i){return ordinal_days(d.day)})
+                                    .attr("y",function(d,i){return scaled_hours(d.hours) })
+
+                var x_axis = d3.axisBottom(ordinal_days);
+                g.append("g").attr("transform", function(d,i){return "translate(0,"+(svgHeight)+")";})
+                                .attr("class","axis axis--x")
+                                .call(x_axis);
+
+                var y_axis = d3.axisLeft(scaled_hours);
+                g.append("g").attr("transform", function(d,i){return "translate(-10,0)";})
+                             .call(y_axis);
+
+            });
+
+        </script>
+    </body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "the-legends-of-d3",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "http-server -p 9999",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "d3": "4.9.1",
+    "http-server": "^0.10.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

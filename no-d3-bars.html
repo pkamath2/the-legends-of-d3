@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="d3/d3.js"></script>
+        <style>
+            .chart rect{
+                fill:steelblue;
+            }
+
+            .chart text{
+                fill: white;
+                font: 10px sans-serif;
+                text-anchor: middle;
+            }
+        </style>
+    </head>
+    <body>
+        <svg class="chart" width="500" height="600">
+            <g transform="translate(0,100)">
+                <rect width="19" height="40"></rect>
+                <text x="9.5" y="10">40</text>    
+            </g>
+            <g transform="translate(20,40)"> 
+                <rect width="19" height="100"></rect>
+                <text x="9.5" y="10">100</text>    
+            </g>
+            <g transform="translate(40,120)"> 
+                <rect width="19" height="20"></rect>
+                <text x="9.5" y="10">20</text>    
+            </g>
+            <g transform="translate(60,60)">
+                <rect width="19" height="80"></rect>
+                <text x="9.5" y="10">80</text>    
+            </g>
+            <g transform="translate(80,0)">
+                <rect width="19" height="140"></rect>
+                <text x="9.5" y="10">140</text>    
+            </g>
+        </svg>
+    </body>
+</html>
