@@ -1,0 +1,43 @@
+<html>
+    <head>
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <style>
+        
+        .polygons {
+            fill: none;
+            stroke: #000;
+        }
+        </style>
+    </head>
+    <body>
+        <svg class="svg" width="960" height="700"></svg>
+        <script>
+
+        var svg = d3.select("svg");
+        var width = +svg.attr("width");
+        var height = +svg.attr("height");
+        var num_of_sites = 10;
+
+        var color = function() {return d3.interpolateRainbow(Math.random())};    
+        draw(10);
+
+        var timer = d3.timer(function(){
+            num_of_sites = num_of_sites +10;
+            draw(num_of_sites);
+            if(num_of_sites > 500)
+                timer.stop();
+        })
+
+        function draw(num_of_sites){
+            sites = d3.range(num_of_sites).map(function(d,i){return [Math.random()*width, Math.random()*height]});
+            voronoi = d3.voronoi().extent([[0,0],[width, height]]).polygons(sites);
+            svg.append("g").attr("class","polygons")
+                            .selectAll("path")
+                            .data(voronoi).enter().append("path")
+                            .attr("d", function(d,i){return "M" + d.join("L") + "Z";})
+                            .attr("fill", function() {return color()})
+        }
+       
+        </script>
+    </body>
+</html>
