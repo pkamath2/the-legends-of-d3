@@ -1,0 +1,53 @@
+<html>
+    <head>
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+    </head>
+    <body>
+        <svg id="svg" width="960" height="700"></svg>
+        <script>
+            var svg = d3.select("svg");
+            var width = +svg.attr("width");
+            var height = +svg.attr("height");
+
+            for(var j=0;j<100;j++){
+                var radius = 10;          
+                var centX = width/2;
+                var centY = height/2;
+
+                var lastX = -999;
+                var lastY = -999;
+
+                var radiusNoise = Math.random()*10;
+                for(var i=0;i<8*Math.PI;i+=5){
+                    radius += 0.5;
+                    radiusNoise += 0.05;
+                    var floatRadius = radius + generateNoise(radiusNoise)*200 - 100;
+                    var x = centX + (floatRadius * Math.cos(i));
+                    var y = centY + (floatRadius * Math.sin(i));
+
+                    if(lastX > -999){
+                        var sw=0;
+                        if(i%10 == 0)sw = 5;
+                        else sw =1;
+                        svg.append("path").attr("d","M"+x+" "+y+"L"+lastX+" "+lastY)
+                                            .attr("fill","none")
+                                            .attr("stroke",d3.interpolateRainbow(Math.random()))
+                                            .attr("stroke-width",sw);
+                    }
+                    lastX = x;
+                    lastY = y;
+                }
+            }
+
+
+            function generateNoise(radiusNoise){
+                //var retradiusNoise = (1 - Math.pow(Math.random(),5));
+                var retradiusNoise = Math.pow(Math.sin(radiusNoise),3)
+                //var retradiusNoise = Math.pow(Math.sin(radiusNoise),(radiusNoise %12));
+                return retradiusNoise;
+            }
+
+             
+        </script>
+    </body>
+</html>

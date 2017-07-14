@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+    </head>
+    <body>
+        <svg id="svg" width="960" height="700"></svg>
+        <script>
+            var svg = d3.select("svg");
+            var width = +svg.attr("width");
+            var height = +svg.attr("height");
+            var path_coordinates = coordinates(10,height/2,width-10,100);
+            path_coordinates = "M"+path_coordinates.join("L")+"Z";
+            console.log(path_coordinates)
+            var path = svg.append("path").attr("d",path_coordinates)
+                                        .attr("fill","none")
+                                        .attr("stroke","red")
+                                        .attr("stroke-width","2")
+
+
+            function coordinates(xstart, ystart, width, height){
+                var coordinates = [];
+                coordinates.push([xstart,ystart].join(" "));
+                for(var i=xstart+1;i<width;i=i+10){
+                    var y = (Math.random() * height)+ystart;
+                    coordinates.push([i,y].join(" "));
+                }
+                return coordinates;
+            }
+
+             
+        </script>
+    </body>
+</html>
