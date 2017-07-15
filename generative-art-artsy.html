@@ -1,0 +1,51 @@
+<html>
+    <head>
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+    </head>
+    <body>
+        <svg id="svg" width="960" height="700"></svg>
+        <script>
+            var svg = d3.select("svg");
+            var width = +svg.attr("width");
+            var height = +svg.attr("height");
+
+            var centX = width/2;
+            var centY = height/2;
+            var radius = 10;
+            var radiusNoise = Math.random()*10;
+            var angleNoise = 0.005;
+            var xNoise = 0.01;
+            var yNoise = 0.01;
+           
+            var group = svg.append("g");
+            beArtsy();
+
+
+            function beArtsy(){
+                
+                    for(var i=0;i<8*Math.PI;i+=0.05){
+                        radiusNoise += 0.5
+                        //radiusNoise = Math.random()*10;
+                        var newRadius = radius + generateNoise2(radiusNoise)*200 - 100;
+                        //var newRadius = radius + perlinNoise[j]*200 -50;
+                        var x = centX + (newRadius * Math.cos(i));
+                        var y = centY + (newRadius * Math.sin(i));
+
+                        var oppX = centX + (newRadius * Math.cos(Math.PI + i));
+                        var oppY = centY + (newRadius * Math.sin(Math.PI + i));
+
+                        group.append("path").attr("d","M"+x+" "+y+"L"+oppX+" "+oppY)
+                                            .attr("stroke","grey")
+                                            .attr("stroke-width",0.5)
+
+                    }
+                
+            }
+
+            function generateNoise2(radiusNoise){
+                var retradiusNoise = Math.pow(Math.sin(radiusNoise),3)
+                return retradiusNoise;
+            }
+        </script>
+    </body>
+</html>
