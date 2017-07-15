@@ -9,7 +9,7 @@
             var width = +svg.attr("width");
             var height = +svg.attr("height");
 
-            for(var j=0;j<100;j++){
+            for(var j=0;j<80;j++){
                 var radius = 10;          
                 var centX = width/2;
                 var centY = height/2;
@@ -18,30 +18,38 @@
                 var lastY = -999;
 
                 var radiusNoise = Math.random()*10;
-                for(var i=0;i<8*Math.PI;i+=5){
+                var somecounter = 0;
+                for(var i=0;i<8*Math.PI;i+=0.05){
                     radius += 0.5;
                     radiusNoise += 0.05;
-                    var floatRadius = radius + generateNoise(radiusNoise)*200 - 100;
+                    var floatRadius = radius + generateNoise2(radiusNoise)*200 - 100;
                     var x = centX + (floatRadius * Math.cos(i));
                     var y = centY + (floatRadius * Math.sin(i));
 
                     if(lastX > -999){
-                        var sw=0;
-                        if(i%10 == 0)sw = 5;
-                        else sw =1;
+                        var linecolor = '#7F6E6E';
+                        if(somecounter%10==0) linecolor = d3.interpolateRainbow(radiusNoise);
+
                         svg.append("path").attr("d","M"+x+" "+y+"L"+lastX+" "+lastY)
                                             .attr("fill","none")
-                                            .attr("stroke",d3.interpolateRainbow(Math.random()))
-                                            .attr("stroke-width",sw);
+                                            //.attr("stroke",d3.interpolateRainbow(radiusNoise))
+                                            //.attr("stroke",'#9A6A6A')
+                                            .attr("stroke",linecolor)
+                                            .attr("stroke-width",0.7);
                     }
                     lastX = x;
                     lastY = y;
+                    somecounter++;
                 }
             }
 
 
-            function generateNoise(radiusNoise){
-                //var retradiusNoise = (1 - Math.pow(Math.random(),5));
+            function generateNoise1(radiusNoise){
+                var retradiusNoise = (Math.pow(radiusNoise,3));
+                return retradiusNoise;
+            }
+
+            function generateNoise2(radiusNoise){
                 var retradiusNoise = Math.pow(Math.sin(radiusNoise),3)
                 //var retradiusNoise = Math.pow(Math.sin(radiusNoise),(radiusNoise %12));
                 return retradiusNoise;
