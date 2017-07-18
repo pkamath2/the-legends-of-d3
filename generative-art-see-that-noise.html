@@ -1,0 +1,44 @@
+<html>
+    <!--Inspired by Matt Pearson's Generative Art using Processing. That is one amazing book.-->
+    <head>
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <script src="node_modules/perlin-noise/index.js"></script>
+    </head>
+    <body>
+        <svg id="svg" width="300" height="300"></svg>
+        <script>
+            var svg = d3.select("svg");
+            var width = +svg.attr("width");
+            var height = +svg.attr("height");
+
+            var xstart = Math.random()*10;
+            var xnoise = xstart;
+            var ynoise = Math.random()*10;
+
+            var strokecolor = Number(parseInt( 0 , 10)).toString(16);
+            strokecolor = "#"+strokecolor+strokecolor+strokecolor;
+
+            var perlinNoiseArr = generatePerlinNoise(width, height);
+            for(var y=0;y<height;y++){
+                ynoise += 0.01;
+                xnoise = xstart;
+                for(var x=0;x<width;x++){
+                    xnoise += 0.01;
+                    var strokeopacity = generateNoise3(x,y);
+                    svg.append("path").attr("d","M"+x+" "+y+"L"+(x+1)+" "+(y+1))
+                                        .attr("stroke-opacity",strokeopacity)
+                                        .attr("stroke",strokecolor);
+                }
+            }
+            
+            function generateNoise2(x,y){
+                var noise = Math.pow(Math.sin((x+y)/2),3)
+                return Math.abs(noise);
+            } 
+
+            function generateNoise3(x, y){
+                return perlinNoiseArr[Math.floor((y*width)+x)];
+            }            
+        </script>
+    </body>
+</html>
