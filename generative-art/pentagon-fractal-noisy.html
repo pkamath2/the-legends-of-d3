@@ -1,0 +1,148 @@
+<html>
+    <!--Inspired by Matt Pearson's Generative Art using Processing. That is one amazing book.-->
+    <head>
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <style>
+            #svg{
+                background-color: floralwhite;
+            }
+        </style>
+    </head>
+    <body>
+        <svg id="svg" width="960" height="700"></svg>
+        <script>
+            var svg = d3.select("svg");
+            var width = +svg.attr("width");
+            var height = +svg.attr("height");
+            
+            var num_of_sides = 5;
+            var max_levels = 5;
+            var max_child_levels = 3;
+            var center_point_x = width/2;
+            var center_point_y = height/2;   
+
+            var g = svg.append("g");
+            var Point = function(x,y){
+                this.x = x;
+                this.y = y;
+            }
+
+              
+
+            var Polygon = function(end_points,strut_factor){
+                this.points = end_points;
+                this.mid_points = new Array();
+                this.strut_points = new Array();
+                this.children = new Array();
+                this.strut_factor = strut_factor;
+                
+                this.findMidPoints = function(){
+                    for(i=0;i<this.points.length;i++){
+                        var x1=this.points[i].x;
+                        var y1=this.points[i].y;
+                        var x2=(i==this.points.length-1)?this.points[0].x:this.points[i+1].x;
+                        var y2=(i==this.points.length-1)?this.points[0].y:this.points[i+1].y;
+                        var mx=0;var my=0;
+                        if(x1>x2)mx=(x2+(x1-x2)/2);
+                        else mx=(x1+(x2-x1)/2);
+                        if(y1>y2)my=(y2+(y1-y2)/2);
+                        else my=(y1+(y2-y1)/2);
+                        this.mid_points.push(new Point(mx,my));
+                    }
+                };
+
+                this.findStrutsPoint = function(){/*0-->3;1-->4;2-->0;3-->1;4-->2;*/
+                    var q=num_of_sides-2;
+                    for(i=0;i<this.mid_points.length;i++){
+                        var oppEndPoint = this.points[(i+q>=num_of_sides)?(i+q-num_of_sides):i+q];
+                        var mp = this.mid_points[i];
+                        var sx=0;var sy=0;
+                        if(oppEndPoint.x>mp.x)sx=mp.x+(oppEndPoint.x-mp.x)*this.strut_factor;
+                        else sx=oppEndPoint.x+(mp.x-oppEndPoint.x)*(1-this.strut_factor);
+                        
+                        if(oppEndPoint.y>mp.y)sy=mp.y+(oppEndPoint.y-mp.y)*this.strut_factor;
+                        else sy=oppEndPoint.y+(mp.y-oppEndPoint.y)*(1-this.strut_factor);
+                        this.strut_points.push(new Point(sx,sy));
+                        
+                    }
+                };
+
+                this.findChildren = function(){
+                    var child_end_points = new Array();
+                    for(var g=0;g<this.points.length;g++){
+                        child_end_points = new Array();
+                        child_end_points.push(this.points[g]);
+                        child_end_points.push(this.mid_points[g]);
+                        child_end_points.push(this.strut_points[g]);
+                        var nextG = g-1;
+                        if(nextG < 0)nextG=nextG+this.points.length;
+                        child_end_points.push(this.strut_points[nextG]);
+                        child_end_points.push(this.mid_points[nextG]);
+                        this.children.push(new Polygon(child_end_points,this.strut_factor));
+                    }
+                };
+
+                this.draw = function(){
+                    this.findMidPoints();
+                    this.findStrutsPoint();
+                    this.findChildren();
+                   for(i=0;i<this.points.length;i++){
+                       g.append("line").attr("x1",this.points[i].x)
+                                        .attr("y1",this.points[i].y)
+                                        .attr("x2",i==this.points.length-1?this.points[0].x:this.points[i+1].x)
+                                        .attr("y2",i==this.points.length-1?this.points[0].y:this.points[i+1].y)
+                                        .attr("stroke","black");
+                   }
+
+                   for(i=0;i<this.strut_points.length;i++){
+                        g.append("line").attr("x1",this.mid_points[i].x)
+                                        .attr("y1",this.mid_points[i].y)
+                                        .attr("x2",this.strut_points[i].x)
+                                        .attr("y2",this.strut_points[i].y)
+                                        .attr("stroke","black");
+                                        
+                       g.append("line").attr("x1",this.strut_points[i].x)
+                                        .attr("y1",this.strut_points[i].y)
+                                        .attr("x2",i==this.strut_points.length-1?this.strut_points[0].x:this.strut_points[i+1].x)
+                                        .attr("y2",i==this.strut_points.length-1?this.strut_points[0].y:this.strut_points[i+1].y)
+                                        .attr("stroke","black");
+                        
+                   }
+                };
+            }
+
+            var polygon_start_points = new Array();
+            for(i=0;i<2*Math.PI;i+=2*Math.PI/num_of_sides){
+                var x = center_point_x + 300*(Math.cos(i));
+                var y = center_point_y + 300*(Math.sin(i));
+                polygon_start_points.push(new Point(x,y))
+            } 
+
+            function recurseDraw(polygonPoints){
+                var polygonArray = new Array();
+                for(k=0;k<max_levels;k++){
+                    var nextPoints = (k==0)?polygonPoints:base_polygon.strut_points;
+                    var nextPolygon = new Polygon(nextPoints,0.75);
+                    nextPolygon.draw();
+                    for(z=0;z<nextPolygon.children.length;z++){
+                        nextPolygon.children[z].draw();
+                    }
+                    polygonArray.push(nextPolygon);
+                    base_polygon = nextPolygon;
+                }
+                return polygonArray;
+            }   
+            init();
+            function init(){
+                var polygonArray = recurseDraw(polygon_start_points);
+                for(k=0;k<polygonArray.length;k++){
+                    var children = polygonArray[k].children;
+                    for(l=0;l<children.length;l++){
+                        recurseDraw(children[l].points);
+                    }
+                    
+                }
+            }
+         </script>
+    </body>
+</html>
