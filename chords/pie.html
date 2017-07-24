@@ -3,7 +3,7 @@
         <script src="https://d3js.org/d3.v4.min.js"></script>
         <style>
             #svg{
-                background-color: black;
+                background-color: white;
             }
         </style>
     </head>
@@ -18,7 +18,6 @@
             
             d3.csv("pi-1600.csv", function(e,d){
                 var matrix = createMatrix(d.columns,Math.sqrt(d.columns.length));
-                console.log(matrix)
                 var g = svg.append("g").attr("transform","translate("+width/2+","+height/2+")");
 
                 var gArcs = g.append("g");
@@ -32,7 +31,7 @@
                             .endAngle(endAngle);
                     angle = endAngle;
                     gArcs.append("path").attr("d", arc())
-                                        .attr("fill","#E74C3C");
+                                        .attr("fill","#C70039");
                 }
 
                 var gRibbons = g.append("g");
@@ -43,7 +42,7 @@
                 gRibbons.selectAll("path").data(chords)
                                             .enter().append("path")
                                             .attr("d", ribbon)
-                                            .attr("stroke","#E74C3C")
+                                            .attr("stroke","black")
                                             .attr("stroke-width","0.5")
                 
             });
