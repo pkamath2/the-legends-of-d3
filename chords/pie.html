@@ -3,7 +3,7 @@
         <script src="https://d3js.org/d3.v4.min.js"></script>
         <style>
             #svg{
-                background-color: floralwhite;
+                background-color: black;
             }
         </style>
     </head>
@@ -13,59 +13,52 @@
             var svg = d3.select("svg");
             var width = +svg.attr("width");
             var height = +svg.attr("height");
-            var innerRadius = 390;
+            var innerRadius = 395;
             var outerRadius = 400;
             
-            var pi_array = [1,4,1,5,9,2,6,5,3,5,8,9,7,9,3,2,3,8,4,6,2,6,4,3,3,8,3,2,7,9,5,0,2,8,8,4,1,9,7,1,6,9,3,9,9,3,7,5,1,0,5,8,2,0,9,7,4,9,4,4,5,9,2,3,0,7,8,1,6,4,0,6,2,8,6,2,0,8,9,9,8,6,2,8,0,3,4,8,2,5,3,4,2,1,1,7,0,6,7,9];
+            d3.csv("pi-1600.csv", function(e,d){
+                var matrix = createMatrix(d.columns,Math.sqrt(d.columns.length));
+                console.log(matrix)
+                var g = svg.append("g").attr("transform","translate("+width/2+","+height/2+")");
 
-            var g = svg.append("g").attr("transform","translate("+width/2+","+height/2+")");
+                var gArcs = g.append("g");
+                var angle = 0;
+                for(var i=0;i<10;i++){
+                    var endAngle = angle+2*Math.PI/10;
+                    var arc = d3.arc()
+                            .innerRadius(innerRadius)
+                            .outerRadius(outerRadius)
+                            .startAngle(angle+0.05)
+                            .endAngle(endAngle);
+                    angle = endAngle;
+                    gArcs.append("path").attr("d", arc())
+                                        .attr("fill","#E74C3C");
+                }
 
-            var gArcs = g.append("g");
-            var angle = 0;
-            for(var i=0;i<10;i++){
-                var endAngle = angle+2*Math.PI/10;
-                var arc = d3.arc()
-                        .innerRadius(innerRadius)
-                        .outerRadius(outerRadius)
-                        .startAngle(angle+0.05)
-                        .endAngle(endAngle);
-                angle = endAngle;
-                gArcs.append("path").attr("d", arc());
-            }
-
-            var gRibbons = g.append("g");
-            var ribbon = d3.ribbon()
-                        .radius(innerRadius);
+                var gRibbons = g.append("g");
+                var ribbon = d3.ribbon().radius(innerRadius);
+                var chord = d3.chord(matrix).padAngle(0.05);
+                chords = chord(matrix);
             
-            
-            var matrix = convertArrayToMatrix(pi_array)
-            var chord = d3.chord(matrix).padAngle(0.05);
-            chords = chord(matrix);
-            console.log(chords)
+                gRibbons.selectAll("path").data(chords)
+                                            .enter().append("path")
+                                            .attr("d", ribbon)
+                                            .attr("stroke","#E74C3C")
+                                            .attr("stroke-width","0.5")
+                
+            });
 
-            gRibbons.selectAll("path").data(chords)
-                                        .enter().append("path")
-                                        .attr("d", ribbon)
-            
-
-            function convertArrayToMatrix(arr){
-                var matrix = new Array();
-                for(var z=0;z<arr.length;z++){
-                    if(z==0){
-                        matrix.push(pi_array);
-                    }else{
-                        var innerMatrix = new Array(pi_array.length);
-                        for(var t=0;t<pi_array.length;t++){
-                            if(t==0)innerMatrix[t]=pi_array[z-1];
-                            else innerMatrix[t]=0;
-                        }
-                        matrix.push(innerMatrix);
+            function createMatrix(orig_array, sub_matrix_length) {
+                var matrix = [], i, k;
+                for (i = 0, k = -1; i < orig_array.length; i++) {
+                    if (i % sub_matrix_length === 0) {
+                        k++;
+                        matrix[k] = [];
                     }
-               }
-               console.log(matrix)
-               return matrix;
-            }
-            
+                    matrix[k].push(orig_array[i]);
+                }
+                return matrix;
+            }            
         </script>
     </body>
 </html>
