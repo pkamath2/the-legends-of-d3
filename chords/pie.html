@@ -3,18 +3,18 @@
         <script src="https://d3js.org/d3.v4.min.js"></script>
         <style>
             #svg{
-                background-color: white;
+                background-color: floralwhite;
             }
         </style>
     </head>
     <body>
-        <svg id="svg" width="1000" height="1000"></svg>
+        <svg id="svg" width="500" height="500"></svg>
         <script>
             var svg = d3.select("svg");
             var width = +svg.attr("width");
             var height = +svg.attr("height");
-            var innerRadius = 395;
-            var outerRadius = 400;
+            var outerRadius = width/2 - 10;
+            var innerRadius = outerRadius - 5;
             
             d3.csv("pi-1600.csv", function(e,d){
                 var matrix = createMatrix(d.columns,Math.sqrt(d.columns.length));
