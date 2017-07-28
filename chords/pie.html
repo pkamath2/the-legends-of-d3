@@ -39,11 +39,17 @@
                 var chord = d3.chord(matrix).padAngle(0.05);
                 chords = chord(matrix);
             
+                var t = d3.transition().duration(1000) ;
                 gRibbons.selectAll("path").data(chords)
                                             .enter().append("path")
                                             .attr("d", ribbon)
+                                            .attr("stroke-width","0,5")
                                             .attr("stroke","black")
-                                            .attr("stroke-width","0.5")
+                                            .style("opacity", 0)
+                                        .transition(t)
+                                            .style("opacity", 1);
+                                            
+                                            
                 
             });
 
